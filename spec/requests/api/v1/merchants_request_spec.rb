@@ -10,20 +10,14 @@ RSpec.describe 'Merchants API' do
 
     merchants = JSON.parse(response.body, symbolize_names: true)
 
-    expect(merchants.count).to eq(4)
+    expect(merchants[:data].count).to eq(4)
 
-    merchants.each do |merchant|
+    merchants[:data].each do |merchant|
       expect(merchant).to have_key(:id)
-      expect(merchant[:id]).to be_a(Integer)
+      expect(merchant[:id]).to be_a(String)
 
-      expect(merchant).to have_key(:name)
-      expect(merchant[:name]).to be_a(String)
-
-      # expect(merchant).to have_key(:created_at)
-      # expect(merchant[:created_at]).to be_a(DateTime)
-
-      # expect(merchant).to have_key(:updated_at)
-      # expect(merchant[:updated_at]).to be_a(DateTime)
+      expect(merchant[:attributes]).to have_key(:name)
+      expect(merchant[:attributes][:name]).to be_a(String)
     end
   end
 
@@ -36,17 +30,11 @@ RSpec.describe 'Merchants API' do
 
     merchant = JSON.parse(response.body, symbolize_names: true)
 
-    expect(merchant).to have_key(:id)
-    expect(merchant[:id]).to be_a(Integer)
+    expect(merchant[:data]).to have_key(:id)
+    expect(merchant[:data][:id]).to be_a(String)
 
-    expect(merchant).to have_key(:name)
-    expect(merchant[:name]).to be_a(String)
-
-    # expect(merchant).to have_key(:created_at)
-    # expect(merchant[:created_at]).to be_a(DateTime)
-
-    # expect(merchant).to have_key(:updated_at)
-    # expect(merchant[:updated_at]).to be_a(DateTime)
+    expect(merchant[:data][:attributes]).to have_key(:name)
+    expect(merchant[:data][:attributes][:name]).to be_a(String)
   end
 
   it 'can create a new merchant' do
@@ -61,8 +49,6 @@ RSpec.describe 'Merchants API' do
 
     expect(response).to be_successful
     expect(created_merchant.name).to eq(merchant_params[:name])
-    # expect(created_merchant.created_at).to be_a(DateTime)
-    # expect(created_merchant.updated_at).to be_a(DateTime)
   end
 
   it 'can update a merchant name' do 
