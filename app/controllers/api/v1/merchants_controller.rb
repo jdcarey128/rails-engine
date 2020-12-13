@@ -20,6 +20,8 @@ class Api::V1::MerchantsController < ApplicationController
 
   def destroy 
     #refactor with serializer 
+    #how to render 204 response? 
+    # head :no_content
     render json: Merchant.delete(params[:id])
   end
 
