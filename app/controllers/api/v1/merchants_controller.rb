@@ -14,15 +14,13 @@ class Api::V1::MerchantsController < ApplicationController
   end
 
   def update 
-    # refactor: harness params are sent through body 
+    # refactor: harness params are sent through body
     render json: MerchantSerializer.new(Merchant.update(params[:id], merchant_params))
   end
 
   def destroy 
     #refactor with serializer 
-    #how to render 204 response? 
-    # head :no_content
-    render json: Merchant.delete(params[:id])
+    Merchant.delete(params[:id])
   end
 
   private 
