@@ -79,4 +79,16 @@ RSpec.describe 'Merchants API' do
     expect(Merchant.count).to eq(0)
     expect{(Merchant.find(id))}.to raise_error(ActiveRecord::RecordNotFound)
   end
+
+  it 'can destroy any associated items with a merchant' do 
+    merchant = create(:merchant, :with_items, item_count: 3)
+    
+    expect(Item.all).to eq(merchant.items)
+    expect(Item.count).to eq(3)
+
+    delete "/api/v1/merchants/#{merchant.id}"
+
+    expect(Item.count).to eq(0)
+    expect(Item.all).to eq([])
+  end
 end
