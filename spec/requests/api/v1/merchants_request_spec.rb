@@ -43,7 +43,7 @@ RSpec.describe 'Merchants API' do
                       })
     headers = {'CONTENT_TYPE' => 'application/json'}
 
-    post '/api/v1/merchants', headers: headers, params: JSON.generate(merchant: merchant_params)
+    post '/api/v1/merchants', headers: headers, params: JSON.generate(merchant_params)
 
     created_merchant = Merchant.last 
 
@@ -58,7 +58,7 @@ RSpec.describe 'Merchants API' do
     merchant_params = {name: 'Ronald Weasley'}
     headers = {'CONTENT_TYPE' => 'application/json'}
 
-    patch "/api/v1/merchants/#{id}", headers: headers, params: JSON.generate({merchant: merchant_params})
+    patch "/api/v1/merchants/#{id}", headers: headers, params: JSON.generate(merchant_params)
     merchant = Merchant.find_by(id: id)
 
     expect(response).to be_successful

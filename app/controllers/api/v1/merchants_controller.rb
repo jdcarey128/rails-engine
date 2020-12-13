@@ -9,23 +9,21 @@ class Api::V1::MerchantsController < ApplicationController
   end
 
   def create 
-    # refactor: harness params are sent through body 
     render json: MerchantSerializer.new(Merchant.create(merchant_params))
   end
 
   def update 
-    # refactor: harness params are sent through body
     render json: MerchantSerializer.new(Merchant.update(params[:id], merchant_params))
   end
 
   def destroy 
-    #refactor with serializer 
     Merchant.delete(params[:id])
+    head :no_content
   end
 
   private 
     def merchant_params 
-      params.require(:merchant).permit(:name)
+      params.permit(:name)
     end
   
 end

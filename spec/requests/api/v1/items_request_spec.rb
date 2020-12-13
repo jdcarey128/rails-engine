@@ -69,7 +69,7 @@ RSpec.describe 'Items API', type: :request do
 
     headers = {'CONTENT_TYPE' => 'application/json'}
 
-    post '/api/v1/items', headers: headers, params: JSON.generate(item: item_params) 
+    post '/api/v1/items', params: JSON.generate(item_params), headers: headers
 
     expect(response).to be_successful
 
