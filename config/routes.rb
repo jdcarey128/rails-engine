@@ -7,6 +7,9 @@ Rails.application.routes.draw do
       scope '/merchants/:id/' do 
         resources :items, only: [:index], controller: 'merchant_items'
       end
+      scope '/items/:id/' do 
+        resources :merchants, only: [:index], controller: 'item_merchants'
+      end
     end
   end
 
