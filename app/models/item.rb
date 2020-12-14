@@ -7,8 +7,10 @@ class Item < ApplicationRecord
 
   def self.find_item(param)
     key = param.keys[0] 
-    if param[key].instance_of?(String)
+    if key == 'name' || key == 'description'
       Item.find_by("lower(#{key}) like ? ", "%#{param[key].downcase}%")
+    elsif param[key].include?('UTC')
+      Item.find_by("#{key} >= ?", param[key])
     else
       Item.find_by("#{key} = ? ", param[key])
     end

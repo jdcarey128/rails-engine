@@ -22,45 +22,44 @@ RSpec.describe Item, type: :model do
       end
 
       it 'returns and item for id match' do 
-        expect(Item.find_item({id: @item.id})).to eq(@item)
+        expect(Item.find_item({id: @item.id.to_s})).to eq(@item)
       end
 
       it 'returns first item for name match' do 
-        expect(Item.find_item({name: @item.name})).to eq(@item)
+        expect(Item.find_item({'name' => @item.name})).to eq(@item)
       end
 
       it 'returns first item for description match' do 
-        expect(Item.find_item({description: @item.description})).to eq(@item)
+        expect(Item.find_item({'description' => @item.description})).to eq(@item)
       end
 
       it 'returns first item for unit_price match' do 
-        expect(Item.find_item({unit_price: @item.unit_price})).to eq(@item)
+        expect(Item.find_item({unit_price: @item.unit_price.to_s})).to eq(@item)
       end
 
       it 'returns first item for merchant_id match' do 
-        expect(Item.find_item({merchant_id: @item.merchant_id})).to eq(@item)
+        expect(Item.find_item({merchant_id: @item.merchant_id.to_s})).to eq(@item)
       end
 
       it 'returns first item for created_at match' do 
-        expect(Item.find_item({created_at: @item.created_at})).to eq(@item)
+        expect(Item.find_item({created_at: @item.created_at.to_s})).to eq(@item)
       end
 
       it 'returns first item for updated_at match' do 
-        expect(Item.find_item({updated_at: @item.updated_at})).to eq(@item)
+        expect(Item.find_item({updated_at: @item.updated_at.to_s})).to eq(@item)
       end
 
       it 'returns first item for partial name match' do 
-        expect(Item.find_item({name: 'halo'})).to eq(@item)
+        expect(Item.find_item({'name' => 'halo'})).to eq(@item)
       end
 
       it 'returns first item for partial description match' do 
-        expect(Item.find_item({description: 'Glow liKe aN aNGel'})).to eq(@item)
+        expect(Item.find_item({'description' => 'Glow liKe aN aNGel'})).to eq(@item)
       end
 
       it 'returns first item for partial description match' do 
-        expect(Item.find_item({description: 'hAt'})).to eq(@item)
+        expect(Item.find_item({'description' => 'hAt'})).to eq(@item)
       end
-
     end
   end
 end
