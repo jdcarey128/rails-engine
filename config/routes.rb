@@ -4,11 +4,15 @@ Rails.application.routes.draw do
     namespace :v1 do 
       resources :items
       resources :merchants 
-      scope '/merchants/:id/' do 
-        resources :items, only: [:index], controller: 'merchant_items'
+      namespace :items do 
+        scope '/:id/' do 
+          resources :merchants, only: [:index], controller: 'item_merchants'
+        end
       end
-      scope '/items/:id/' do 
-        resources :merchants, only: [:index], controller: 'item_merchants'
+      namespace :merchants do 
+        scope '/:id/' do 
+          resources :items, only: [:index], controller: 'merchant_items'
+        end
       end
     end
   end
