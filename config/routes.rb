@@ -9,6 +9,7 @@ Rails.application.routes.draw do
         end
       end
       namespace :merchants do 
+        get 'find', to: 'search#show'
         scope '/:id/' do 
           resources :items, only: [:index], controller: 'merchant_items'
         end
