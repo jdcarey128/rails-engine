@@ -10,7 +10,7 @@ class Item < ApplicationRecord
     if key == 'name' || key == 'description'
       Item.find_by("lower(#{key}) like ? ", "%#{param[key].downcase}%")
     elsif param[key].include?('UTC')
-      Item.find_by("#{key} >= ?", param[key])
+      Item.find_by("#{key} >= ? AND #{key} <= ?", param[key], within_12_hours)
     else
       Item.find_by("#{key} = ? ", param[key])
     end
@@ -21,9 +21,14 @@ class Item < ApplicationRecord
     if key == 'name' || key == 'description'
       Item.where("lower(#{key}) like ? ", "%#{param[key].downcase}%")
     elsif param[key].include?('UTC')
-      Item.where("#{key} >= ?", param[key])
+      Item.where("#{key} >= ? AND #{key} <= ?", param[key], within_12_hours).limit(20)
     else
       Item.where("#{key} = ? ", param[key])
     end
   end
+
+  private 
+    def self.within_12_hours
+      (Time.now.utc + 0.5.days).to_s
+    end
 end

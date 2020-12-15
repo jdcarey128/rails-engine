@@ -41,9 +41,7 @@ RSpec.describe 'Items Find All', type: :request do
       expect(response).to be_successful
 
       items = JSON.parse(response.body, symbolize_names: true)[:data]
-
       expect(items.count).to eq(3)
-
       items.each do |item|
         expect(item[:attributes][:name]).to include(@item_1.name)
       end
@@ -55,9 +53,7 @@ RSpec.describe 'Items Find All', type: :request do
       expect(response).to be_successful
 
       items = JSON.parse(response.body, symbolize_names: true)[:data]
-
       expect(items.count).to eq(4)
-
       items.each do |item|
         expect(item[:attributes][:name].upcase).to include('WATCH')
       end
@@ -67,17 +63,13 @@ RSpec.describe 'Items Find All', type: :request do
       get "/api/v1/items/find_all?description=top+quality"
 
       expect(response).to be_successful
-
       items = JSON.parse(response.body, symbolize_names: true)[:data]
-
       expect(items.count).to eq(1)
 
       get "/api/v1/items/find_all?description=#{@item_1.description}"
 
       expect(response).to be_successful
-
       items = JSON.parse(response.body, symbolize_names: true)[:data]
-
       expect(items.count).to eq(3)
     end
 
@@ -85,9 +77,7 @@ RSpec.describe 'Items Find All', type: :request do
       get "/api/v1/items/find_all?unit_price=#{@item_1.unit_price}"
 
       expect(response).to be_successful
-
       items = JSON.parse(response.body, symbolize_names: true)[:data]
-
       expect(items.count).to eq(3)
     end
 
@@ -95,17 +85,48 @@ RSpec.describe 'Items Find All', type: :request do
       get "/api/v1/items/find_all?created_at=#{@item_1.created_at}"
 
       expect(response).to be_successful
-
       items = JSON.parse(response.body, symbolize_names: true)[:data]
-
       expect(items.count).to eq(4)
 
       get "/api/v1/items/find_all?updated_at=#{@item_1.updated_at}"
 
       expect(response).to be_successful
-
       items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items.count).to eq(4)
+    end
 
+    it 'created_at and updated_at limit 20' do 
+      create_list(:item, 20)
+
+      get "/api/v1/items/find_all?created_at=#{@item_1.created_at}"
+
+      expect(response).to be_successful
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items.count).to eq(20)
+
+      get "/api/v1/items/find_all?updated_at=#{@item_1.updated_at}"
+
+      expect(response).to be_successful
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items.count).to eq(20)
+    end
+
+    it 'created_at and updated_at within 12 hours' do 
+      create_list(:item, 5,
+                  created_at: Time.now.utc + 1.day, 
+                  updated_at: Time.now.utc + 1.day
+                )
+
+      get "/api/v1/items/find_all?created_at=#{@item_1.created_at}"
+
+      expect(response).to be_successful
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items.count).to eq(4)
+
+      get "/api/v1/items/find_all?updated_at=#{@item_1.updated_at}"
+
+      expect(response).to be_successful
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
       expect(items.count).to eq(4)
     end
 
@@ -113,9 +134,7 @@ RSpec.describe 'Items Find All', type: :request do
       get "/api/v1/items/find_all?merchant_id=#{@item_1.merchant.id}"
 
       expect(response).to be_successful
-
       items = JSON.parse(response.body, symbolize_names: true)[:data]
-
       expect(items.count).to eq(2)
     end
   end

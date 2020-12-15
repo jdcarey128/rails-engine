@@ -10,7 +10,7 @@ class Merchant < ApplicationRecord
     if key == 'name'
       Merchant.find_by("lower(#{key}) like ? ", "%#{param[key].downcase}%")
     elsif param[key].include?('UTC')
-      Merchant.find_by("#{key} >= ?", param[key])
+      Merchant.find_by("#{key} >= ? AND #{key} <= ?", param[key], within_12_hours)
     else
       Merchant.find_by("#{key} = ? ", param[key])
     end
@@ -21,10 +21,15 @@ class Merchant < ApplicationRecord
     if key == 'name'
       Merchant.where("lower(#{key}) like ? ", "%#{param[key].downcase}%")
     elsif param[key].include?('UTC')
-      Merchant.where("#{key} >= ?", param[key])
+      Merchant.where("#{key} >= ? AND #{key} <= ?", param[key], within_12_hours).limit(20)
     else
       Merchant.where("#{key} = ? ", param[key])
     end
   end
+
+  private 
+    def self.within_12_hours 
+      (Time.now.utc + 0.5.day).to_s 
+    end
 
 end
