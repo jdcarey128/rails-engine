@@ -104,6 +104,11 @@ RSpec.describe Item, type: :model do
         expect(Item.find_all('description' => 'fOr').count).to eq(4)
       end
 
+      it 'returns an array with two items for merchant_id match' do 
+        expect(Item.find_all('merchant_id' => @item_1.merchant.id.to_s)).to eq([@item_1, @item_4])
+        expect(Item.find_all('merchant_id' => @item_1.merchant.id.to_s).count).to eq(2)
+      end
+
       it 'returns an array with multiple items for unit_price' do 
         expect(Item.find_all('unit_price' => @item_1.unit_price.to_s)).to eq(@items)
         expect(Item.find_all('unit_price' => @item_1.unit_price.to_s).count).to eq(3)
