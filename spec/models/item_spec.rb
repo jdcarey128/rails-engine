@@ -61,5 +61,64 @@ RSpec.describe Item, type: :model do
         expect(Item.find_item({'description' => 'hAt'})).to eq(@item)
       end
     end
+
+    describe 'find_all' do 
+      before :each do 
+        @items  = create_list(:item, 3, 
+                              name: 'running watch', 
+                              description: 'great for long distances!', 
+                              unit_price: 50.00, 
+                             )
+        @item_1 = @items.first 
+        @item_4 = create(    :item, 
+                              name: 'gps watch',
+                              description: 'top quality watch for running', 
+                              unit_price: 500.00,
+                              merchant: @item_1.merchant 
+            )
+      end
+      
+      it 'returns an item array with one item for id' do
+        expect(Item.find_all('id' => @item_1.id.to_s)).to eq([@item_1])
+        expect(Item.find_all('id' => @item_4.id.to_s)).to eq([@item_4])
+      end
+
+      it 'returns an array with multiple items for name' do 
+        expect(Item.find_all('name' => @item_1.name)).to eq(@items)
+        expect(Item.find_all('name' => @item_1.name).count).to eq(3)
+        expect(Item.find_all('name' => 'waTCh')).to eq([@items, @item_4].flatten)
+        expect(Item.find_all('name' => 'waTCh').count).to eq(4)
+      end
+
+      it 'returns an array with multiple items for description' do 
+        expect(Item.find_all('description' => @item_1.description)).to eq(@items)
+        expect(Item.find_all('description' => @item_1.description).count).to eq(3)
+        expect(Item.find_all('description' => @item_4.description)).to eq([@item_4])
+        expect(Item.find_all('description' => @item_4.description).count).to eq(1)
+      end
+
+      it 'returns an array with multiple items for partial match description' do 
+        expect(Item.find_all('description' => 'great FOR')).to eq(@items)
+        expect(Item.find_all('description' => 'great FOR').count).to eq(3)
+        expect(Item.find_all('description' => 'fOr')).to eq([@items, @item_4].flatten)
+        expect(Item.find_all('description' => 'fOr').count).to eq(4)
+      end
+
+      it 'returns an array with multiple items for unit_price' do 
+        expect(Item.find_all('unit_price' => @item_1.unit_price.to_s)).to eq(@items)
+        expect(Item.find_all('unit_price' => @item_1.unit_price.to_s).count).to eq(3)
+      end
+
+      it 'returns an array with multiple items for created_at' do 
+        expect(Item.find_all('created_at' => @item_1.created_at.to_s)).to eq([@items, @item_4].flatten)
+        expect(Item.find_all('created_at' => @item_1.created_at.to_s).count).to eq(4)
+      end
+
+      it 'returns an array with multiple items for updated_at' do 
+        expect(Item.find_all('updated_at' => @item_1.updated_at.to_s)).to eq([@items, @item_4].flatten)
+        expect(Item.find_all('updated_at' => @item_1.updated_at.to_s).count).to eq(4)
+      end
+
+    end
   end
 end
