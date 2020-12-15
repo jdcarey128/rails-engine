@@ -37,7 +37,32 @@ RSpec.describe Merchant, type: :model do
       it 'returns a merchant with partial name match' do 
         expect(Merchant.find_merchant('name' => 'bruce WAYNE')).to eq(@merchant)
       end
-
     end
+
+    describe 'find_all()' do 
+      before :each do 
+        @merchants = create_list(:merchant, 3, 
+                                 name: 'Holly and Davis'
+                                )
+        @merchant_1 = @merchants[0]
+        @merchant_4 = create(:merchant, 
+                              name: 'Randall Pits Meals On Wheels')
+      end
+
+      it 'returns array with one merchant with id' do 
+        expect(Merchant.find_all('id' => @merchant_1.id.to_s)).to eq([@merchant_1])
+      end
+
+      it 'returns array with multiple merchants with name' do 
+        expect(Merchant.find_all('name' => @merchant_1.name)).to eq(@merchants)
+        expect(Merchant.find_all('name' => @merchant_4.name)).to eq([@merchant_4])
+      end
+
+      it 'returns an array with all merchants with created_at and updated_at' do 
+        expect(Merchant.find_all('created_at' => @merchant_1.created_at.to_s)).to eq([@merchants, @merchant_4].flatten)
+        expect(Merchant.find_all('updated_at' => @merchant_1.updated_at.to_s)).to eq([@merchants, @merchant_4].flatten)
+      end
+    end
+
   end
 end

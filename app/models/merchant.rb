@@ -15,4 +15,16 @@ class Merchant < ApplicationRecord
       Merchant.find_by("#{key} = ? ", param[key])
     end
   end
+
+  def self.find_all(param)
+    key = param.keys[0]
+    if key == 'name'
+      Merchant.where("lower(#{key}) like ? ", "%#{param[key].downcase}%")
+    elsif param[key].include?('UTC')
+      Merchant.where("#{key} >= ?", param[key])
+    else
+      Merchant.where("#{key} = ? ", param[key])
+    end
+  end
+
 end
