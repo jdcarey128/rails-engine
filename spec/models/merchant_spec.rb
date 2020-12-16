@@ -66,5 +66,33 @@ RSpec.describe Merchant, type: :model do
       end
     end
 
+    describe 'most_revenue(limit)' do 
+      before :each do 
+        @merchant_1 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 100)
+        @merchant_2 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 10)
+        @merchant_3 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 500)
+        @merchant_4 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 75)
+        @merchant_5 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 50)
+        @merchant_6 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 5)
+        @merchant_7 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 8)
+        @ordered_revenues = [@merchant_3, @merchant_1, @merchant_4, @merchant_5, @merchant_2, @merchant_7, @merchant_6]
+      end
+
+      it 'returns array with ordered merchants by revenue' do 
+        expect(Merchant.most_revenue(3)).to eq(@ordered_revenues.first(3))
+      end
+
+      it 'returns array length based on limit arg' do 
+        expect(Merchant.most_revenue(5)).to eq(@ordered_revenues.first(5))
+        expect(Merchant.most_revenue(7)).to eq(@ordered_revenues.first(7))
+        expect(Merchant.most_revenue(10)).to eq(@ordered_revenues)
+      end
+
+      it 'does not return merchant revenue with failed transactions' do 
+        new_merchant = create(:merchant, :with_invoice_items, invoice_count: 1, 
+          item_quantity: 2, unit_price: 1000, transaction_result: 'failed')
+        expect(Merchant.most_revenue(2)).to eq(@ordered_revenues.first(2))
+      end
+    end
   end
 end
