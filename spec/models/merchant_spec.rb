@@ -67,14 +67,20 @@ RSpec.describe Merchant, type: :model do
 
     describe 'most_revenue(limit)' do
       before :each do
-        @merchant_1 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 100)
-        @merchant_2 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 10)
-        @merchant_3 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 500)
-        @merchant_4 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 75)
-        @merchant_5 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 50)
-        @merchant_6 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 5)
-        @merchant_7 = create(:merchant, :with_invoice_items, invoice_count: 1, item_quantity: 2, unit_price: 8)
-        @ordered_revenues = [@merchant_3, @merchant_1, @merchant_4, @merchant_5, @merchant_2, @merchant_7, @merchant_6]
+        #revenue = $800
+        @merchant_1 = create(:merchant, :with_invoice_items, invoice_count: 2, invoice_status: 'shipped', invoice_item_count: 2, item_quantity: 2,  unit_price: 100, transaction_result: 'success')
+        #revenue = $300
+        @merchant_2 = create(:merchant, :with_invoice_items, invoice_count: 2, invoice_status: 'shipped', invoice_item_count: 3, item_quantity: 1,  unit_price: 50, transaction_result: 'success')
+        #revenue = $200
+        @merchant_3 = create(:merchant, :with_invoice_items, invoice_count: 1, invoice_status: 'shipped', invoice_item_count: 5, item_quantity: 2,  unit_price: 20, transaction_result: 'success')
+        #revenue = $100
+        @merchant_4 = create(:merchant, :with_invoice_items, invoice_count: 5, invoice_status: 'shipped', invoice_item_count: 2, item_quantity: 1,  unit_price: 10, transaction_result: 'success')
+        #revenue = $60
+        @merchant_5 = create(:merchant, :with_invoice_items, invoice_count: 3, invoice_status: 'shipped', invoice_item_count: 2, item_quantity: 2,  unit_price: 5, transaction_result: 'success')
+        #not successful transactions
+        @merchant_6 = create(:merchant, :with_invoice_items, invoice_count: 6, invoice_status: 'shipped', invoice_item_count: 3, item_quantity: 2,  unit_price: 60, transaction_result: 'failed')
+        @merchant_7 = create(:merchant, :with_invoice_items, invoice_count: 3, invoice_status: 'packaged', invoice_item_count: 1, item_quantity: 2,  unit_price: 100, transaction_result: 'success')
+        @ordered_revenues = [@merchant_1, @merchant_2, @merchant_3, @merchant_4, @merchant_5]
       end
 
       it 'returns array with ordered merchants by revenue' do
@@ -82,15 +88,10 @@ RSpec.describe Merchant, type: :model do
       end
 
       it 'returns array length based on limit arg' do
+        expect(Merchant.most_revenue(1).first).to eq(@ordered_revenues.first)
         expect(Merchant.most_revenue(5)).to eq(@ordered_revenues.first(5))
-        expect(Merchant.most_revenue(7)).to eq(@ordered_revenues.first(7))
+        expect(Merchant.most_revenue(7)).to eq(@ordered_revenues)
         expect(Merchant.most_revenue(10)).to eq(@ordered_revenues)
-      end
-
-      it 'does not return merchant revenue with failed transactions' do
-        new_merchant = create(:merchant, :with_invoice_items, invoice_count: 1,
-                                                              item_quantity: 2, unit_price: 1000, transaction_result: 'failed')
-        expect(Merchant.most_revenue(2)).to eq(@ordered_revenues.first(2))
       end
     end
 

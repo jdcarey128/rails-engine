@@ -16,15 +16,23 @@ class Merchant < ApplicationRecord
   end
 
   def self.most_revenue(limit)
-    Merchant.select('merchants.*, sum(invoice_items.quantity * invoice_items.unit_price) as revenue')
-            .joins(:invoice_items, :invoices, :transactions).merge(Transaction.successful)
-            .merge(Invoice.shipped).group(:id).order('revenue DESC').limit(limit)
+    select('merchants.*, sum(invoice_items.quantity * invoice_items.unit_price) as revenue')
+      .joins(invoices: [:invoice_items, :transactions])
+      .merge(Transaction.successful)
+      .merge(Invoice.shipped)
+      .group(:id)
+      .order('revenue DESC')
+      .limit(limit)
   end
 
   def self.most_items(limit)
-    Merchant.select('merchants.*, sum(invoice_items.quantity) as total_items_sold')
-            .joins(:invoices, :invoice_items, :transactions).merge(Transaction.successful)
-            .merge(Invoice.shipped).group(:id).order('total_items_sold DESC').limit(limit)
+    select('merchants.*, sum(invoice_items.quantity) as total_items_sold')
+      .joins(invoices: [:invoice_items, :transactions])
+      .merge(Transaction.successful)
+      .merge(Invoice.shipped)
+      .group(:id)
+      .order('total_items_sold DESC')
+      .limit(limit)
   end
 
   # def self.all_merchant_revenue(_start_date, _end_date)
