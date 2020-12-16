@@ -61,6 +61,16 @@ RSpec.describe 'Business Intelligence Endpoints', type: :request do
       expect(merchants[0][:attributes][:name]).to_not eq(new_merchant.name)
       expect(merchants[0][:attributes][:name]).to eq(@merchant_3.name)
     end
+
+    it 'returns a 400 error without parameter' do 
+      get '/api/v1/merchants/most_revenue' 
+
+      expect(response).to be_successful
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json).to have_key(:errors)
+      expect(json).to have_key(:status)
+      expect(json[:errors][0]).to eq("A quantity param is required in your query")
+    end
   end
 
   describe 'merchants with most sold items' do 
@@ -95,6 +105,16 @@ RSpec.describe 'Business Intelligence Endpoints', type: :request do
       get '/api/v1/merchants/most_items?quantity=6' 
       merchants = JSON.parse(response.body, symbolize_names: true)[:data]
       expect(merchants.count).to eq(6)
+    end
+
+    it 'returns a 400 error without parameter' do 
+      get '/api/v1/merchants/most_items' 
+
+      expect(response).to be_successful
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json).to have_key(:errors)
+      expect(json).to have_key(:status)
+      expect(json[:errors][0]).to eq("A quantity param is required in your query")
     end
   end
 end
