@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :invoice do
     customer 
     merchant 
-    status { 'Shipped' }
+    status { 'shipped' }
 
     trait :with_invoice_items do 
       transient do 

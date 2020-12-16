@@ -62,4 +62,39 @@ RSpec.describe 'Business Intelligence Endpoints', type: :request do
       expect(merchants[0][:attributes][:name]).to eq(@merchant_3.name)
     end
   end
+
+  describe 'merchants with most sold items' do 
+    before :each do 
+      @merchant_1 = create(:merchant, :with_invoice_items, item_quantity: 8)
+      @merchant_2 = create(:merchant, :with_invoice_items, item_quantity: 12)
+      @merchant_3 = create(:merchant, :with_invoice_items, item_quantity: 5)
+      @merchant_4 = create(:merchant, :with_invoice_items, item_quantity: 10)
+      @merchant_5 = create(:merchant, :with_invoice_items, item_quantity: 7)
+      @merchant_6 = create(:merchant, :with_invoice_items, item_quantity: 20)
+      @merchant_7 = create(:merchant, :with_invoice_items, item_quantity: 15)
+    end
+
+    it 'returns a variable array of ordered merchants by item sold' do 
+      get '/api/v1/merchants/most_items?quantity=3' 
+
+      expect(response).to be_successful
+      
+      merchants = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(merchants.count).to eq(3)
+
+      merchants.each do |merchant|
+        expect(merchant).to have_key(:id)
+        expect(merchant).to have_key(:type)
+        expect(merchant).to have_key(:attributes)
+      end
+
+      expect(merchants[0][:attributes][:name]).to eq(@merchant_6.name)
+      expect(merchants[1][:attributes][:name]).to eq(@merchant_7.name)
+      expect(merchants[2][:attributes][:name]).to eq(@merchant_2.name)
+
+      get '/api/v1/merchants/most_items?quantity=6' 
+      merchants = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(merchants.count).to eq(6)
+    end
+  end
 end
