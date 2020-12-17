@@ -114,6 +114,81 @@ RSpec.describe Merchant, type: :model do
       end
     end
 
+    describe 'revenue' do 
+      before :each do 
+        @m1, @m2, @m3, @m4, @m5, @m6, @m7 = create_list(:merchant, 7)
+
+        #Create item for each merchant 
+        @item1 = create(:item, merchant: @m1)
+        @item2 = create(:item, merchant: @m2)
+        @item3 = create(:item, merchant: @m3)
+        @item4 = create(:item, merchant: @m4)
+        @item5 = create(:item, merchant: @m5)
+        @item6 = create(:item, merchant: @m6)
+        @item7 = create(:item, merchant: @m7)
+
+        #Create invoice for each merchant 
+        @invoice1 = create(:invoice, merchant: @m1, created_at: '2020-12-01 12:00:00')
+        @invoice2 = create(:invoice, merchant: @m2, created_at: '2020-12-02 12:00:00')
+        @invoice3 = create(:invoice, merchant: @m3, created_at: '2020-12-03 12:00:00')
+        @invoice4 = create(:invoice, merchant: @m4, created_at: '2020-12-05 14:00:00')
+        @invoice5 = create(:invoice, merchant: @m5, created_at: '2020-12-05 23:59:59')
+        @invoice6 = create(:invoice, merchant: @m6, created_at: '2020-12-06 12:00:00')
+        @invoice7 = create(:invoice, merchant: @m7, created_at: '2020-12-07 12:00:00', status: 'packaged')
+
+        #Create Invoice items with above items and invoices
+        @ii1 = create(:invoice_item, item: @item1, invoice: @invoice1, quantity: 1, unit_price: 10.00)
+        @ii2 = create(:invoice_item, item: @item2, invoice: @invoice2, quantity: 1, unit_price: 20.00)
+        @ii3 = create(:invoice_item, item: @item3, invoice: @invoice3, quantity: 1, unit_price: 30.00)
+        @ii4 = create(:invoice_item, item: @item4, invoice: @invoice4, quantity: 1, unit_price: 40.00)
+        @ii5 = create(:invoice_item, item: @item5, invoice: @invoice5, quantity: 1, unit_price: 50.00)
+        @ii6 = create(:invoice_item, item: @item6, invoice: @invoice6, quantity: 1, unit_price: 60.00)
+        @ii7 = create(:invoice_item, item: @item7, invoice: @invoice7, quantity: 1, unit_price: 70.00)
+
+        #Transactions assigned to invoice 
+        @t1 = create(:transaction, invoice: @invoice1)
+        @t2 = create(:transaction, invoice: @invoice2)
+        @t3 = create(:transaction, invoice: @invoice3)
+        @t4 = create(:transaction, invoice: @invoice4)
+        @t5 = create(:transaction, invoice: @invoice5)
+        @t6 = create(:transaction, invoice: @invoice6, result: 'failed')
+        @t7 = create(:transaction, invoice: @invoice7)
+      end
+
+      it 'calculates the revenue of all merchants across date ranges' do 
+        start_date = '2020-12-02'
+        end_date   = '2020-12-04'
+
+        revenue = @ii2.unit_price + @ii3.unit_price
+
+        expect(Merchant.total_revenue(start_date, end_date)).to eq(revenue)
+        start_date = '2020-12-01'
+        
+        end_date   = '2020-12-05'
+        revenue = @ii1.unit_price + @ii2.unit_price + @ii3.unit_price + @ii4.unit_price + @ii5.unit_price 
+
+        expect(Merchant.total_revenue(start_date, end_date)).to eq(revenue)
+      end
+
+      it 'can calculate the revenue of all merchants for a single day' do 
+        start_date = '2020-12-05'
+        end_date   = '2020-12-06'
+        revenue = @ii4.unit_price + @ii5.unit_price 
+
+        expect(Merchant.total_revenue(start_date, end_date)).to eq(revenue)
+      end
+
+      it 'will not include merchants with unsuccessful transactions' do 
+        #expect all but 6 and 7 
+
+        start_date = '2018-01-05'
+        end_date   = '2022-01-05'
+        revenue = @ii1.unit_price + @ii2.unit_price + @ii3.unit_price + @ii4.unit_price + @ii5.unit_price 
+
+        expect(Merchant.total_revenue(start_date, end_date)).to eq(revenue)
+      end
+    end
+
     
   end
 end
