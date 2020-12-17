@@ -69,7 +69,7 @@ RSpec.describe 'Items API', type: :request do
     expect(json).to have_key(:status)
     expect(json[:status]).to eq("bad_request")
     expect(json).to have_key(:errors)
-    expect(json[:errors]).to eq('Item does not exist in the database')
+    expect(json[:errors]).to eq('The item in your query does not exist in the database')
   end
 
   it 'can create an item' do 

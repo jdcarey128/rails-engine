@@ -5,11 +5,21 @@ class Api::V1::MerchantsController < ApplicationController
   end
 
   def show 
-    render json: MerchantSerializer.new(Merchant.find(params[:id]))
+    merchant = Merchant.find_by(id: params[:id])
+    if merchant 
+      render json: MerchantSerializer.new(merchant)
+    else 
+      render_error("The merchant id", " does not exist in the database")
+    end
   end
 
   def create 
-    render json: MerchantSerializer.new(Merchant.create(merchant_params))
+    merchant = Merchant.new(merchant_params)
+    if merchant.save 
+      render json: MerchantSerializer.new(merchant)
+    else 
+      render_error(merchant.errors.full_messages.to_sentence)
+    end
   end
 
   def update 
@@ -25,5 +35,11 @@ class Api::V1::MerchantsController < ApplicationController
     def merchant_params 
       params.permit(:name)
     end
-  
+    
+    def render_error(error, extension = "")
+      render json: {
+        status: :bad_request,
+        errors: "#{error} in your query" + extension
+      }
+    end
 end

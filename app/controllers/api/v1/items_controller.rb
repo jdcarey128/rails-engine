@@ -9,7 +9,7 @@ class Api::V1::ItemsController < ApplicationController
     if item 
       render json: ItemSerializer.new(item)
     else 
-      nonexisting_item
+      render_error("The item", " does not exist in the database")
     end
   end
 
@@ -18,7 +18,7 @@ class Api::V1::ItemsController < ApplicationController
     if item.save 
       render json: ItemSerializer.new(item)
     else 
-      missing_params(item)
+      render_error(item.errors.full_messages.to_sentence)
     end
   end
 
@@ -36,17 +36,10 @@ class Api::V1::ItemsController < ApplicationController
       params.permit(:name, :description, :unit_price, :merchant_id)
     end
 
-    def nonexisting_item
+    def render_error(error, extension = "")
       render json: {
         status: :bad_request,
-        errors: "Item does not exist in the database"
-      }
-    end
-
-    def missing_params(item)
-      render json: {
-        status: :bad_request,
-        errors: "#{item.errors.full_messages.to_sentence} in your query"
+        errors: "#{error} in your query" + extension
       }
     end
 end
