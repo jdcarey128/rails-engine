@@ -36,19 +36,11 @@ class Merchant < ApplicationRecord
   end
 
   def self.total_revenue(start_date, end_date)
-    if start_date == end_date 
-      joins(invoices: [:invoice_items, :transactions])
-        .merge(Transaction.successful)
-        .merge(Invoice.shipped)
-        .where('Date(invoices.created_at) = ?', "#{start_date} 00:00:00")
-        .sum('invoice_items.quantity * invoice_items.unit_price')
-    else 
-      joins(invoices: [:invoice_items, :transactions])
-        .merge(Transaction.successful)
-        .merge(Invoice.shipped)
-        .where('invoices.created_at >= ? AND invoices.created_at <= ?', "#{start_date} 00:00:00", "#{end_date} 24:00:00")
-        .sum('invoice_items.quantity * invoice_items.unit_price')
-    end
+    joins(invoices: [:invoice_items, :transactions])
+      .merge(Transaction.successful)
+      .merge(Invoice.shipped)
+      .where('invoices.created_at >= ? AND invoices.created_at <= ?', "#{start_date} 00:00:00", "#{end_date} 24:00:00")
+      .sum('invoice_items.quantity * invoice_items.unit_price')
   end
 
   # def self.merchant_revenue(merchant_id)

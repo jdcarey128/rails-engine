@@ -75,13 +75,13 @@ RSpec.describe 'Business Intelligence Endpoints', type: :request do
 
   describe 'merchants with most sold items' do 
     before :each do 
-      @merchant_1 = create(:merchant, :with_invoice_items, item_quantity: 8)
-      @merchant_2 = create(:merchant, :with_invoice_items, item_quantity: 12)
-      @merchant_3 = create(:merchant, :with_invoice_items, item_quantity: 5)
+      @merchant_1 = create(:merchant, :with_invoice_items, item_quantity: 5)
+      @merchant_2 = create(:merchant, :with_invoice_items, item_quantity: 7)
+      @merchant_3 = create(:merchant, :with_invoice_items, item_quantity: 8)
       @merchant_4 = create(:merchant, :with_invoice_items, item_quantity: 10)
-      @merchant_5 = create(:merchant, :with_invoice_items, item_quantity: 7)
-      @merchant_6 = create(:merchant, :with_invoice_items, item_quantity: 20)
-      @merchant_7 = create(:merchant, :with_invoice_items, item_quantity: 15)
+      @merchant_5 = create(:merchant, :with_invoice_items, item_quantity: 12)
+      @merchant_6 = create(:merchant, :with_invoice_items, item_quantity: 15)
+      @merchant_7 = create(:merchant, :with_invoice_items, item_quantity: 20)
     end
 
     it 'returns a variable array of ordered merchants by item sold' do 
@@ -98,9 +98,9 @@ RSpec.describe 'Business Intelligence Endpoints', type: :request do
         expect(merchant).to have_key(:attributes)
       end
 
-      expect(merchants[0][:attributes][:name]).to eq(@merchant_6.name)
-      expect(merchants[1][:attributes][:name]).to eq(@merchant_7.name)
-      expect(merchants[2][:attributes][:name]).to eq(@merchant_2.name)
+      expect(merchants[0][:attributes][:name]).to eq(@merchant_7.name)
+      expect(merchants[1][:attributes][:name]).to eq(@merchant_6.name)
+      expect(merchants[2][:attributes][:name]).to eq(@merchant_5.name)
 
       get '/api/v1/merchants/most_items?quantity=6' 
       merchants = JSON.parse(response.body, symbolize_names: true)[:data]
@@ -115,6 +115,119 @@ RSpec.describe 'Business Intelligence Endpoints', type: :request do
       expect(json).to have_key(:errors)
       expect(json).to have_key(:status)
       expect(json[:errors][0]).to eq("A quantity param is required in your query")
+    end
+  end
+
+  describe 'revenue' do 
+    before :each do 
+      @m1, @m2, @m3, @m4, @m5, @m6, @m7 = create_list(:merchant, 7)
+
+      #Create item for each merchant 
+      @item1 = create(:item, merchant: @m1)
+      @item2 = create(:item, merchant: @m2)
+      @item3 = create(:item, merchant: @m3)
+      @item4 = create(:item, merchant: @m4)
+      @item5 = create(:item, merchant: @m5)
+      @item6 = create(:item, merchant: @m6)
+      @item7 = create(:item, merchant: @m7)
+
+      #Create invoice for each merchant 
+      @invoice1 = create(:invoice, merchant: @m1, created_at: '2020-12-01 12:00:00')
+      @invoice2 = create(:invoice, merchant: @m2, created_at: '2020-12-02 12:00:00')
+      @invoice3 = create(:invoice, merchant: @m3, created_at: '2020-12-03 12:00:00')
+      @invoice4 = create(:invoice, merchant: @m4, created_at: '2020-12-04 12:00:00')
+      @invoice5 = create(:invoice, merchant: @m5, created_at: '2020-12-05 12:00:00')
+      @invoice6 = create(:invoice, merchant: @m6, created_at: '2020-12-06 12:00:00')
+      @invoice7 = create(:invoice, merchant: @m7, created_at: '2020-12-07 12:00:00', status: 'packaged')
+
+      #Create Invoice items with above items and invoices
+      @ii1 = create(:invoice_item, item: @item1, invoice: @invoice1, quantity: 1, unit_price: 10.00)
+      @ii2 = create(:invoice_item, item: @item2, invoice: @invoice2, quantity: 1, unit_price: 20.00)
+      @ii3 = create(:invoice_item, item: @item3, invoice: @invoice3, quantity: 1, unit_price: 30.00)
+      @ii4 = create(:invoice_item, item: @item4, invoice: @invoice4, quantity: 1, unit_price: 40.00)
+      @ii5 = create(:invoice_item, item: @item5, invoice: @invoice5, quantity: 1, unit_price: 50.00)
+      @ii6 = create(:invoice_item, item: @item6, invoice: @invoice6, quantity: 1, unit_price: 60.00)
+      @ii7 = create(:invoice_item, item: @item7, invoice: @invoice7, quantity: 1, unit_price: 70.00)
+
+      #Transactions assigned to invoice 
+      @t1 = create(:transaction, invoice: @invoice1)
+      @t2 = create(:transaction, invoice: @invoice2)
+      @t3 = create(:transaction, invoice: @invoice3)
+      @t4 = create(:transaction, invoice: @invoice4)
+      @t5 = create(:transaction, invoice: @invoice5)
+      @t6 = create(:transaction, invoice: @invoice6, result: 'failed')
+      @t7 = create(:transaction, invoice: @invoice7)
+    end
+
+    it 'returns the total revenue for successful transactions across date range' do 
+      #expect revenue total for invoice items 1-3 (with 1 item, revenue = unit_price)
+      revenue = @ii1.unit_price + @ii2.unit_price + @ii3.unit_price
+
+      start_date = '2020-12-01'
+      end_date   = '2020-12-03'
+
+      get "/api/v1/revenue?start=#{start_date}&end=#{end_date}"
+      expect(response).to be_successful
+
+      json = JSON.parse(response.body, symbolize_names: true)[:data]
+
+      expect(json).to have_key(:id)
+      expect(json[:id]).to be_nil
+      expect(json).to have_key(:attributes)
+      expect(json[:attributes]).to have_key(:revenue)
+      expect(json[:attributes][:revenue]).to eq(revenue)
+    end
+
+    it 'returns an error with missing params' do 
+      start_date = '2020-12-01'
+      end_date   = '2020-12-05'
+
+      get "/api/v1/revenue?start=#{start_date}"
+      expect(response).to be_successful
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(json).to have_key(:status)
+      expect(json[:status]).to eq("bad_request")
+      expect(json).to have_key(:errors)
+      expect(json[:errors]).to include("A end date param is required in your query")
+
+      get "/api/v1/revenue?end=#{end_date}"
+      expect(response).to be_successful
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(json).to have_key(:status)
+      expect(json[:status]).to eq("bad_request")
+      expect(json).to have_key(:errors)
+      expect(json[:errors]).to include("A start date param is required in your query")
+
+      get "/api/v1/revenue"
+      expect(response).to be_successful
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(json[:errors]).to include("A start date param is required in your query")
+      expect(json[:errors]).to include("A end date param is required in your query")
+    end
+
+    it 'includes revenue for all successful transactions in large date range' do 
+      #expect all but @ii6 and @ii7 to be calculate in total revenue 
+      revenue = @ii1.unit_price + @ii2.unit_price + @ii3.unit_price + @ii4.unit_price + @ii5.unit_price
+
+      start_date = '1980-03-01'
+      end_date   = '2050-09-03'
+
+      get "/api/v1/revenue?start=#{start_date}&end=#{end_date}"
+      expect(response).to be_successful
+
+      json = JSON.parse(response.body, symbolize_names: true)[:data]
+      
+      expect(json).to have_key(:id)
+      expect(json[:id]).to be_nil
+      expect(json).to have_key(:attributes)
+      expect(json[:attributes]).to have_key(:revenue)
+      expect(json[:attributes][:revenue]).to eq(revenue)
     end
   end
 end
