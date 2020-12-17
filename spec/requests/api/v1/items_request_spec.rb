@@ -189,4 +189,14 @@ RSpec.describe 'Items API', type: :request do
     expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 
+  it 'can delete an item with an invoice_item' do 
+    item = create(:item)
+    create(:invoice_item, item: item)
+
+    expect{delete "/api/v1/items/#{item.id}"}.to change(Item, :count).by(-1)
+
+    expect(Item.count).to eq(0)
+    expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
 end
