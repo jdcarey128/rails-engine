@@ -187,8 +187,18 @@ RSpec.describe Merchant, type: :model do
 
         expect(Merchant.total_revenue(start_date, end_date)).to eq(revenue)
       end
-    end
 
-    
+      it 'return the total revenue of a merchant' do 
+        expect(Merchant.merchant_revenue(@m1.id)[0].revenue).to eq(@ii1.unit_price)
+      end
+
+      it 'returns an empty array for a merchant with no successful transactions' do 
+        expect(Merchant.merchant_revenue(@m6.id)).to eq([])
+      end
+
+      it 'returns an empty array for a nonexisting merchant' do 
+        expect(Merchant.merchant_revenue(1500)).to eq([])
+      end
+    end
   end
 end

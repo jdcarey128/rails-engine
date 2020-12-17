@@ -13,7 +13,7 @@ Rails.application.routes.draw do
       end
       resources :items
       
-      get '/revenue', to: 'merchants/revenue#total_revenue'
+      get '/revenue', to: 'merchants/business#total_revenue'
       
       namespace :merchants do 
         get 'find', to: 'search#show'
@@ -22,6 +22,7 @@ Rails.application.routes.draw do
         get 'most_items', to: 'business#most_items'
         scope '/:id/' do 
           resources :items, only: [:index], controller: 'merchant_items'
+          get '/revenue', to: 'business#merchant_revenue'
         end
       end
       resources :merchants 

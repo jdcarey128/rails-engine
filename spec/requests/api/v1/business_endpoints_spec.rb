@@ -229,5 +229,45 @@ RSpec.describe 'Business Intelligence Endpoints', type: :request do
       expect(json[:attributes]).to have_key(:revenue)
       expect(json[:attributes][:revenue]).to eq(revenue)
     end
+
+    it 'returns revenue for a single merchant' do 
+      get "/api/v1/merchants/#{@m1.id}/revenue"
+
+      expect(response).to be_successful
+
+      json = JSON.parse(response.body, symbolize_names: true)[:data]
+
+      expect(json).to have_key(:id)
+      expect(json[:nil]).to eq(nil)
+      expect(json[:attributes]).to have_key(:revenue)
+      expect(json[:attributes][:revenue]).to eq(@ii1.unit_price)
+      
+      get "/api/v1/merchants/#{@m2.id}/revenue"
+      json = JSON.parse(response.body, symbolize_names: true)[:data]
+
+      expect(json).to have_key(:id)
+      expect(json[:nil]).to eq(nil)
+      expect(json[:attributes]).to have_key(:revenue)
+      expect(json[:attributes][:revenue]).to eq(@ii2.unit_price)
+    end
+
+    it 'returns 0 for a merchant without successful transactions' do 
+      get "/api/v1/merchants/#{@m6.id}/revenue"
+
+      expect(response).to be_successful
+
+      json = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(json[:attributes][:revenue]).to eq(0)
+    end
+
+    it 'returns an error for a merchant that does not exist' do 
+      get "/api/v1/merchants/1252/revenue"
+
+      expect(response).to be_successful
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json).to have_key(:errors) 
+      expect(json[:errors]).to include('A valid merchant id param is required in your query')
+    end
   end
 end

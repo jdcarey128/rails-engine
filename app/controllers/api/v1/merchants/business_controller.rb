@@ -19,7 +19,16 @@ class Api::V1::Merchants::BusinessController < ApplicationController
       errors << 'end date' unless end_date
       return missing_params(errors)
     end
+    #Refactor render json: RevenueSerializer.format_revenue(Merchant.total_revenue(start_date, end_date))
     render json: RevenueSerializer.format_revenue(Api::V1::MerchantRevenueFacade.total_revenue(start_date, end_date))
+  end
+
+  def merchant_revenue 
+    return missing_params(['valid merchant id']) unless Merchant.find_by(id: params[:id])
+    result = Merchant.merchant_revenue(params[:id])
+    revenue = 0 if result.empty? 
+    revenue = result[0].revenue unless result.empty? 
+    render json: RevenueSerializer.format_revenue(revenue)  
   end
 
   private 
