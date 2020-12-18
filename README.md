@@ -10,13 +10,13 @@ This API exposes fictional ecommerce data for item, merchant, and business intel
     - [Items](#items)
     - [Business Intelligence](#business-intelligence)
   - [Example Queries](#example-queries)
-    -[Creating A Merchant](#creating-a-merchant)
-    -[Creating An Item](#createing-an-item)
-    -[Returning A Merchant's Items](#returning-a-merchant's-items)
-    -[Returning Top 10 Merchants With Most Revenue](#returning-top-10-merchants-with-most-revenue)
+    - [Creating A Merchant](#creating-a-merchant)
+    - [Creating An Item](#createing-an-item)
+    - [Returning A Merchant's Items](#returning-a-merchant's-items)
+    - [Returning Top 10 Merchants With Most Revenue](#returning-top-10-merchants-with-most-revenue)
   - [Common Errors](#common-errors)
-    -[Missing Parameter(s)](#missing-parameter(s))
-    -[Non-existent Record](#non-existent-record)
+    - [Missing Parameter(s)](#missing-parameter(s))
+    - [Non-existent Record](#non-existent-record)
   - [Contact](#contact)
 
 
@@ -103,7 +103,7 @@ Note: when making *POST* or *PATCH* queries, make sure the raw body is sent as J
 
  ### Creating An Item 
  
- Query (using merchant info above):  
+ Query (using merchant id above):  
  
  <img src="https://i.ibb.co/Kz4LM6H/Screen-Shot-2020-12-17-at-8-53-00-PM.png" alt="creating-an-item" border="0" width=50%>
  
