@@ -9,7 +9,7 @@ This API exposes fictional ecommerce data for item, merchant, and business intel
     - [Merchants](#merchants)
     - [Items](#items)
     - [Business Intelligence](#business-intelligence)
-  - [Examples](#examples)
+  - [Example Queries](#example-queries)
   - [Common Errors](#common-errors)
     
 
@@ -29,13 +29,13 @@ It is recommended that you use Postman to perform API queries. To download the p
  1. Return specific merchant: *GET* `/merchants/:id`
  1. Create merchant: *POST* `/merchants` 
     1. Within the body of the request, include: 
-    ```` {
-          "name": "merchant name"
-         } ````
+       ```{
+            "name": "merchant name"
+          } 
  1. Update merchant: *PATCH* `/merchant/:id` 
-    ```` {
-          "name": "new merchant name"
-        } ````    
+          {
+            "name": "new merchant name"
+          }   
  1. Delete merchant: *DELETE* `/merchants/:id`
       *Note: a successful delete will not return rendered JSON.*
  1. Return all items associated with a merchant: *GET* `/merchants/:id/items`
@@ -49,12 +49,12 @@ It is recommended that you use Postman to perform API queries. To download the p
  1. Return specific item: *GET* `/items/:id`
  1. Create item: *POST* `/items` 
     1. Within the body of the request, include: 
-    ```` {
-          "name": "item name", 
-          "description": "item description (optional)",
-          "unit_price": "item price (in dollars)", 
-          "merchant_id": "existing merchant id"
-        } ````
+       ```{
+            "name": "item name", 
+            "description": "item description (optional)",
+            "unit_price": "item price (in dollars)", 
+            "merchant_id": "existing merchant id"
+          }
  1. Update item: *PATCH* `/items/:id` 
     1. Include any one, or more, of the attributes as listed above in the body of the request. 
  1. Delete item: *DELETE* `/items/:id`
@@ -72,3 +72,9 @@ It is recommended that you use Postman to perform API queries. To download the p
  1. Return the total revenue for all merchants between two dates: *GET* `/revenue?start=<start_date>&end=<end_date>`
     1. Formating accepted for *start_date* and *end_date* is 'yyyy-mm-dd'
  1. Return the total revenue for a specific merchant: *GET* `/merchants/:id/revenue`
+ 
+ ## Example Queries 
+ 
+ 
+ 
+ <img src="https://jdcarey128.imgbb.com/" alt="creating-a-merchant">
