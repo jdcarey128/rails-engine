@@ -76,5 +76,4 @@ It is recommended that you use Postman to perform API queries. To download the p
  ## Example Queries 
  
  
- 
- <img src="https://jdcarey128.imgbb.com/" alt="creating-a-merchant">
+ <img src="https://i.ibb.co/GMF0BS9/Screen-Shot-2020-12-17-at-8-08-50-PM.png" alt="creating-a-merchant" border="0">
