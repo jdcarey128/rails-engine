@@ -37,6 +37,20 @@ RSpec.describe 'Merchants API' do
     expect(merchant[:data][:attributes][:name]).to be_a(String)
   end
 
+  it 'cannot send one merchant if they do not exist' do 
+    id = create(:merchant).id
+    id2 = id + 1
+
+    get "/api/v1/merchants/#{id2}"    
+
+    expect(response).to be_successful
+    json = JSON.parse(response.body, symbolize_names: true)
+    expect(json).to have_key(:status)
+    expect(json[:status]).to eq("bad_request")
+    expect(json).to have_key(:errors)
+    expect(json[:errors]).to eq("The merchant id in your query does not exist in the database")
+  end
+
   it 'can create a new merchant' do
     merchant_params = ({
                         name: 'Harry Potter'
@@ -49,6 +63,18 @@ RSpec.describe 'Merchants API' do
 
     expect(response).to be_successful
     expect(created_merchant.name).to eq(merchant_params[:name])
+  end
+
+  it 'cannot create a new merchant without a name' do 
+    headers = {'CONTENT_TYPE' => 'application/json'}
+
+    post '/api/v1/merchants', headers: headers
+    expect(response).to be_successful
+    json = JSON.parse(response.body, symbolize_names: true)
+    expect(json).to have_key(:status)
+    expect(json[:status]).to eq("bad_request")
+    expect(json).to have_key(:errors)
+    expect(json[:errors]).to eq("Name can't be blank in your query")
   end
 
   it 'can update a merchant name' do 

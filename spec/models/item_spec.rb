@@ -12,6 +12,30 @@ RSpec.describe Item, type: :model do
     it { should have_many(:invoices).through(:invoice_items) }
   end
 
+  describe 'callbacks' do 
+    describe 'clean_invoices' do 
+      it 'deletes any blank invoices after item deletion' do 
+        item = create(:item)
+        invoice = create(:invoice)
+        invoice2 = create(:invoice)
+        invoice_item = create(:invoice_item, item: item, invoice: invoice)
+        invoice_item2 = create(:invoice_item, item: item, invoice: invoice2)
+        
+        expect{item.destroy}.to change(Invoice, :count).by(-2)
+      end
+
+      it 'deletes only invoices if they have no other associated items' do 
+        item  = create(:item)
+        item2 = create(:item)
+        invoice = create(:invoice)
+        invoice_item = create(:invoice_item, item: item, invoice: invoice)
+        invoice_item2 = create(:invoice_item, item: item2, invoice: invoice)
+        
+        expect{item.destroy}.to change(Invoice, :count).by(0)
+      end
+    end
+  end
+
   describe 'class methods' do 
     describe 'find_item()' do 
       before :each do 
@@ -123,7 +147,6 @@ RSpec.describe Item, type: :model do
         expect(Item.find_all('updated_at' => @item_1.updated_at.to_s)).to eq([@items, @item_4].flatten)
         expect(Item.find_all('updated_at' => @item_1.updated_at.to_s).count).to eq(4)
       end
-
     end
   end
 end

@@ -56,6 +56,22 @@ RSpec.describe 'Items API', type: :request do
     expect(result[:merchant_id]).to be_a(Integer)
   end
 
+  it 'cannot show an item that does not exist' do 
+    id  = create(:item).id
+    id2 = id + 1
+
+    get "/api/v1/items/#{id2}" 
+
+    expect(response).to be_successful 
+
+    json = JSON.parse(response.body, symbolize_names: true) 
+
+    expect(json).to have_key(:status)
+    expect(json[:status]).to eq("bad_request")
+    expect(json).to have_key(:errors)
+    expect(json[:errors]).to eq('The item in your query does not exist in the database')
+  end
+
   it 'can create an item' do 
     merchant = create(:merchant)
     item = build(:item)
@@ -79,6 +95,44 @@ RSpec.describe 'Items API', type: :request do
     expect(new_item.description).to eq(item[:description])
     expect(new_item.unit_price).to eq(item[:unit_price])
     expect(new_item.merchant_id).to eq(merchant.id)
+  end
+
+  it 'cannot create an item with a missing param' do 
+    merchant = create(:merchant)
+    item = build(:item)
+
+    item_params = {
+            name: item[:name],
+            description: item[:description],
+            unit_price: item[:unit_price]
+          }
+
+    headers = {'CONTENT_TYPE' => 'application/json'}
+
+    post '/api/v1/items', params: JSON.generate(item_params), headers: headers
+
+    expect(response).to be_successful
+    json = JSON.parse(response.body, symbolize_names: true)
+    
+    expect(json).to have_key(:status)
+    expect(json[:status]).to eq("bad_request")
+    expect(json).to have_key(:errors)
+    expect(json[:errors]).to eq("Merchant must exist in your query")
+
+    item_params = {
+      description: item[:description],
+      merchant_id: merchant.id
+    }
+
+    post '/api/v1/items', params: JSON.generate(item_params), headers: headers
+
+    expect(response).to be_successful
+    json = JSON.parse(response.body, symbolize_names: true)
+    
+    expect(json).to have_key(:status)
+    expect(json[:status]).to eq("bad_request")
+    expect(json).to have_key(:errors)
+    expect(json[:errors]).to eq("Name can't be blank and Unit price can't be blank in your query")
   end
 
   it 'can update an item' do 
@@ -130,6 +184,16 @@ RSpec.describe 'Items API', type: :request do
 
     expect(response).to be_successful
     expect(response.status).to eq(204)
+
+    expect(Item.count).to eq(0)
+    expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it 'can delete an item with an invoice_item' do 
+    item = create(:item)
+    create(:invoice_item, item: item)
+
+    expect{delete "/api/v1/items/#{item.id}"}.to change(Item, :count).by(-1)
 
     expect(Item.count).to eq(0)
     expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)

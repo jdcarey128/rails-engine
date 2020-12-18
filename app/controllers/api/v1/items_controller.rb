@@ -5,11 +5,21 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show 
-    render json: ItemSerializer.new(Item.find(params[:id]))
+    item = Item.find_by(id: params[:id])
+    if item 
+      render json: ItemSerializer.new(item)
+    else 
+      render_error("The item", " does not exist in the database")
+    end
   end
 
   def create 
-    render json: ItemSerializer.new(Item.create(item_params))
+    item = Item.new(item_params)
+    if item.save 
+      render json: ItemSerializer.new(item)
+    else 
+      render_error(item.errors.full_messages.to_sentence)
+    end
   end
 
   def update 
@@ -17,12 +27,19 @@ class Api::V1::ItemsController < ApplicationController
   end
   
   def destroy 
-    Item.delete(params[:id])
+    Item.destroy(params[:id])
     head :no_content
   end
 
   private 
     def item_params 
       params.permit(:name, :description, :unit_price, :merchant_id)
+    end
+
+    def render_error(error, extension = "")
+      render json: {
+        status: :bad_request,
+        errors: "#{error} in your query" + extension
+      }
     end
 end
