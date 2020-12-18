@@ -93,41 +93,43 @@ Note: when making *POST* or *PATCH* queries, make sure the raw body is sent as J
   
  ### Creating A Merchant
  
- Query: 
- <img src="https://i.ibb.co/GMF0BS9/Screen-Shot-2020-12-17-at-8-08-50-PM.png" alt="creating-a-merchant" border="0" width=50% alignment='center'>
+ Query:  
  
- Result: 
- <img src="https://i.ibb.co/GCyyJ6b/Screen-Shot-2020-12-17-at-8-08-35-PM.png" alt="created-merchant-result" border="0" width=50% alignment='center'>
+<img src="https://i.ibb.co/SPsRmG4/Screen-Shot-2020-12-17-at-8-53-30-PM.png" alt="creating-a-merchant" border="0" width=50%>
+ 
+ Result:  
+ 
+ <img src="https://i.ibb.co/GCyyJ6b/Screen-Shot-2020-12-17-at-8-08-35-PM.png" alt="created-merchant-result" border="0" width=50%>
 
  ### Creating An Item 
  
- Query (using merchant info above): 
+ Query (using merchant info above):  
  
- <img src="https://i.ibb.co/DgqXpwX/Screen-Shot-2020-12-17-at-8-19-19-PM.png" alt="creating-an-item" border="0" width=50% alignment='center'>
+ <img src="https://i.ibb.co/Kz4LM6H/Screen-Shot-2020-12-17-at-8-53-00-PM.png" alt="creating-an-item" border="0" width=50%>
  
  Result: 
  
- <img src="https://i.ibb.co/FhQLWLn/Screen-Shot-2020-12-17-at-8-19-36-PM.png" alt="created-item-result" border="0" width=50% alignment='center'>
+ <img src="https://i.ibb.co/FhQLWLn/Screen-Shot-2020-12-17-at-8-19-36-PM.png" alt="created-item-result" border="0" width=50%>
  
  ### Returning A Merchant's Items 
  
  Query: 
  
- <img src="https://i.ibb.co/0msr55j/Screen-Shot-2020-12-17-at-8-27-18-PM.png" alt="merchant-items-query" border="0" width=50% alignment='center'>
+ <img src="https://i.ibb.co/0msr55j/Screen-Shot-2020-12-17-at-8-27-18-PM.png" alt="merchant-items-query" border="0" width=50%>
  
  Result: 
  
- <img src="https://i.ibb.co/ykJYszr/Screen-Shot-2020-12-17-at-8-27-32-PM.png" alt="merchant-item-result" border="0" width=50% alignment='center'>
+ <img src="https://i.ibb.co/ykJYszr/Screen-Shot-2020-12-17-at-8-27-32-PM.png" alt="merchant-item-result" border="0" width=50%>
  
  ### Returning Top 10 Merchants With Most Revenue
  
  Query: 
  
- <img src="https://i.ibb.co/LJ8jbqF/Screen-Shot-2020-12-17-at-8-30-09-PM.png" alt="top-10-most-revenue" border="0" width=50% alignment='center'>
+ <img src="https://i.ibb.co/LJ8jbqF/Screen-Shot-2020-12-17-at-8-30-09-PM.png" alt="top-10-most-revenue" border="0" width=50%>
  
  Result (first three records): 
  
- <img src="https://i.ibb.co/2PGKcsC/Screen-Shot-2020-12-17-at-8-37-02-PM.png" alt="first-three-most-revenue" border="0" width=50% alignment='center'>
+ <img src="https://i.ibb.co/2PGKcsC/Screen-Shot-2020-12-17-at-8-37-02-PM.png" alt="first-three-most-revenue" border="0" width=50%>
  
  
  ## Common Errors 
@@ -136,13 +138,13 @@ Note: when making *POST* or *PATCH* queries, make sure the raw body is sent as J
  
  1. You will receive an error message similar to the following if missing a parameter when creating a record: 
  
- <img src="https://i.ibb.co/TMnzPVB/Screen-Shot-2020-12-17-at-8-41-20-PM.png" alt="missing-param-error" border="0" width=50% alignment='center'>
+ <img src="https://i.ibb.co/TMnzPVB/Screen-Shot-2020-12-17-at-8-41-20-PM.png" alt="missing-param-error" border="0" width=50%>
  
  ### Non-existent Record 
  
  1. When an id that does not exist in the database is used for a show request, you will receive the following error: 
  
- <img src="https://i.ibb.co/Ry1QpYq/Screen-Shot-2020-12-17-at-8-41-44-PM.png" alt="non-existent-record-error" border="0" width=50% alignment='center'>
+ <img src="https://i.ibb.co/Ry1QpYq/Screen-Shot-2020-12-17-at-8-41-44-PM.png" alt="non-existent-record-error" border="0" width=50%>
  
  
  ## Contact 
