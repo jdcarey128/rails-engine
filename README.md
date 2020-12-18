@@ -34,7 +34,7 @@ It is recommended that you use Postman to perform API queries. To download the p
 
 Note: when making *POST* or *PATCH* queries, make sure the raw body is sent as JSON. 
 
-<img src="https://i.ibb.co/5rnNkJv/Screen-Shot-2020-12-17-at-8-17-21-PM.png" alt="request-body-as-json" border="0">
+<img src="https://i.ibb.co/5rnNkJv/Screen-Shot-2020-12-17-at-8-17-21-PM.png" alt="request-body-as-json">
 
 
 ### Merchants 
